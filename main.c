@@ -1,4 +1,5 @@
 #include "builtins.h"
+#include <linux/limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +10,8 @@
 
 #define MYSH_TOK_BUFSIZE 64
 #define MYSH_TOK_DELIM " \t\r\n\a"
+#define ANSI_COLOR_BLUE "\x1b[34m"
+#define ANSI_COLOR_RESET "\x1b[0m"
 
 int mysh_start(char **args);
 void mysh_loop(void);
@@ -29,10 +32,11 @@ void mysh_loop(void)
     char *line;
     char **args;
     int status;
+    char cwd[PATH_MAX];
 
     do
     {
-        printf("> ");
+        printf(ANSI_COLOR_BLUE "%s > " ANSI_COLOR_RESET, getcwd(cwd, sizeof(cwd)));
         line = mysh_read_line();
         args = mysh_split_line(line);
         status = mysh_execute(args); 

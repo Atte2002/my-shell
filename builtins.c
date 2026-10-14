@@ -11,6 +11,11 @@ int (*builtin_func[]) (char **) = {
     &mysh_cd
 };
 
+int mysh_num_builtins()
+{
+    return sizeof(builtin_str) / sizeof(char *);
+}
+
 int mysh_cd(char **args)
 {
     if(args[1] == NULL)
@@ -28,7 +33,4 @@ int mysh_cd(char **args)
     return 1;
 }
 
-int mysh_num_builtins()
-{
-    return sizeof(builtin_str) / sizeof(char *);
-}
+
