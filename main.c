@@ -1,3 +1,4 @@
+#include "builtins.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,7 +8,7 @@
 #include <unistd.h>
 
 #define MYSH_TOK_BUFSIZE 64
-#define MYSH_TOK_DELIM "\t\r\n\a"
+#define MYSH_TOK_DELIM " \t\r\n\a"
 
 int mysh_start(char **args);
 void mysh_loop(void);
@@ -100,6 +101,25 @@ char **mysh_split_line(char *line)
    return tokens;
 }
 
+int mysh_execute(char **args)
+{
+    if(args[0] == NULL)
+    {
+        return 1;
+    }
+
+    // Check if the command is builtin
+    for(int i = 0; i < mysh_num_builtins(); i++)
+    {
+        if(strcmp(args[0], builtin_str[i]) == 0)
+        {
+            return (*builtin_func[i])(args);
+        }
+    }
+
+    return mysh_start(args);
+}
+
 int mysh_start(char **args)
 {
     pid_t pid;
@@ -107,6 +127,7 @@ int mysh_start(char **args)
     int status;
 
     pid = fork();
+
     if(pid == 0)
     {
         if(execvp(args[0], args) == -1)
@@ -138,4 +159,6 @@ int mysh_start(char **args)
     }
     return 1;
 }
+
+
 
